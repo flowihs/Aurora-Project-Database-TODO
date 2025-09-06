@@ -18,8 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -61,17 +59,16 @@ public class UserService {
     }
 
     public JwtResponse login(final UserLoginDto dto) {
-        Optional<User> userOpt = userRepository.findByNickname(dto.getNickname());
-        User user = userOpt
+        User user = userRepository.findByNickname(dto.getNickname())
                 .orElseThrow(UserNotFoundException::new);
 
-        boolean passwordMatches = passwordEncoder.matches(dto.getPassword(), user.getPassword());
-        if (!passwordMatches) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException();
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getNickname());
         String token = jwtService.generateToken(userDetails);
+
         return new JwtResponse(token);
     }
 }
