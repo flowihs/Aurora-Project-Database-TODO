@@ -5,7 +5,8 @@ import lombok.Value;
 @Value
 public class UserCreateDto {
     String nickname;
-    String firstName;
-    String lastName;
+    String firstname;
+    String lastname;
+    String email;
     String password;
 }

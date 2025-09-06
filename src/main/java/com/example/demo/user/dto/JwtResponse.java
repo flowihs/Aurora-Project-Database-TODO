@@ -1,8 +1,16 @@
 package com.example.demo.user.dto;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class JwtResponse {
-    String token;
+    private String token;
+
+    public JwtResponse(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
 }
