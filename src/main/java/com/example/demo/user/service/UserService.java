@@ -1,11 +1,10 @@
 package com.example.demo.user.service;
 
-import com.example.demo.constant.ErrorMessage;
 import com.example.demo.exception.DuplicateResourceException;
 import com.example.demo.exception.InvalidCredentialsException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.security.CustomUserDetailsService;
-import com.example.demo.security.JwtService;
+import com.example.demo.security.jwt.JwtService;
 import com.example.demo.user.dto.UserRegistrationResponseDto;
 import com.example.demo.user.entity.User;
 import com.example.demo.user.dto.JwtResponse;
@@ -29,11 +28,11 @@ public class UserService {
     @Transactional
     public UserRegistrationResponseDto register(final UserCreateDto dto) {
         if (userRepository.existsByNickname(dto.getNickname())) {
-            throw new DuplicateResourceException(ErrorMessage.ERROR_1001);
+            throw new DuplicateResourceException("Nickname уже зарегистрирован");
         }
 
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new DuplicateResourceException(ErrorMessage.ERROR_1002);
+            throw new DuplicateResourceException("Email уже зарегистрирован");
         }
 
         User user = User.builder()
@@ -63,7 +62,7 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException("Неверный пароль");
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getNickname());
