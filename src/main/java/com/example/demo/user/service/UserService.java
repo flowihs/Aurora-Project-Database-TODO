@@ -57,6 +57,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public JwtResponse login(final UserLoginDto dto) {
         User user = userRepository.findByNickname(dto.getNickname())
                 .orElseThrow(UserNotFoundException::new);
