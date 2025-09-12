@@ -5,6 +5,7 @@ import com.example.demo.security.jwt.JwtAuthenticationFilter;
 import com.example.demo.user.dto.JwtResponse;
 import com.example.demo.user.dto.UserRegistrationResponseDto;
 import com.example.demo.user.service.UserService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,8 +33,9 @@ public class AuthControllerTest {
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @SneakyThrows
     @Test
-    void registrationUserTest() throws Exception {
+    void registrationUserTest() {
         when(userService.register(any())).thenReturn(
                 UserRegistrationResponseDto.builder()
                         .success(true)
@@ -58,8 +60,9 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.success").value(true));
     }
 
+    @SneakyThrows
     @Test
-    void loginUserTest() throws Exception {
+    void loginUserTest() {
         when(userService.login(any())).thenReturn(
                 new JwtResponse("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibmlja25hbWUiOiJpdmFuX3BldHJvdiJ9")
         );
