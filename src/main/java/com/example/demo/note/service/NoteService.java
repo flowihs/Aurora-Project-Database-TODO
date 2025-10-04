@@ -7,6 +7,7 @@ import com.example.demo.note.dto.UpdateNoteRequest;
 import com.example.demo.note.entity.Note;
 import com.example.demo.note.repository.NoteRepository;
 import com.example.demo.user.entity.User;
+import com.example.demo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,11 +25,21 @@ import java.util.List;
 public class NoteService {
 
     private final NoteRepository noteRepository;
+    private final UserRepository userRepository;
 
     @Cacheable(key = "'user:' + #user.id + ':notes'")
-    public List<Note> getUserNotes(User user) {
-        return noteRepository.findByUser(user);
+    public List<NoteResponse> getUserNotes(User user) {
+        return noteRepository.findByUser(user).stream()
+                .map(NoteResponse::fromEntity)
+                .toList();
     }
+
+    public List<NoteResponse> getNotesWithLikeFilter (User user, String likeName) {
+        return noteRepository.findAllByUserAndNameLike(user, likeName).stream()
+                .map(NoteResponse::fromEntity)
+                .toList();
+    }
+
 
     @Transactional
     @CacheEvict(key = "'user:' + #user.id + ':notes'")
@@ -79,9 +90,7 @@ public class NoteService {
     }
 
     public List<NoteResponse> getUserNotesResponse(User user) {
-        return getUserNotes(user).stream()
-                .map(NoteResponse::fromEntity)
-                .toList();
+        return getUserNotes(user);
     }
 
     public NoteResponse getNoteResponseById(Long noteId, User user) {

@@ -64,7 +64,10 @@ public class AuthControllerTest {
     @Test
     void loginUserTest() {
         when(userService.login(any())).thenReturn(
-                new JwtResponse("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibmlja25hbWUiOiJpdmFuX3BldHJvdiJ9")
+                JwtResponse
+                        .builder()
+                        .token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibmlja25hbWUiOiJpdmFuX3BldHJvdiJ9")
+                        .build()
         );
 
         mockMvc.perform(post("/login")

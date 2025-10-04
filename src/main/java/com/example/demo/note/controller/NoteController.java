@@ -53,6 +53,14 @@ public class NoteController {
         return ResponseEntity.ok(notes);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<NoteResponse>> getNotesWithNameFilter (
+            @AuthenticationPrincipal User user,
+            @RequestParam String nameFilter
+    ) {
+        return ResponseEntity.ok(noteService.getNotesWithLikeFilter(user, nameFilter));
+    }
+
     @PostMapping
     @Operation(
             summary = "Создать новую заметку",

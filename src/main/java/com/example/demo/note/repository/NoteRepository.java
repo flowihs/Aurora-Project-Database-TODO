@@ -14,4 +14,6 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     List<Note> findByUser(User user);
 
     Optional<Note> findByIdAndUser(Long id, User user);
+
+    List<Note> findAllByUserAndNameLike (User user, String name);
 }
