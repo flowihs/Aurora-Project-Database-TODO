@@ -48,15 +48,15 @@ public class NoteController {
             )
     })
     public ResponseEntity<List<NoteResponse>> getUserNotes(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal final User user) {
         List<NoteResponse> notes = noteService.getUserNotesResponse(user);
         return ResponseEntity.ok(notes);
     }
 
     @GetMapping("/filter")
     public ResponseEntity<List<NoteResponse>> getNotesWithNameFilter (
-            @AuthenticationPrincipal User user,
-            @RequestParam String nameFilter
+            @AuthenticationPrincipal final User user,
+            @RequestParam final String nameFilter
     ) {
         return ResponseEntity.ok(noteService.getNotesWithLikeFilter(user, nameFilter));
     }
@@ -87,8 +87,8 @@ public class NoteController {
             )
     })
     public ResponseEntity<NoteResponse> createNote(
-            @AuthenticationPrincipal User user,
-            @RequestBody CreateNoteRequest request) {
+            @AuthenticationPrincipal final User user,
+            @RequestBody final CreateNoteRequest request) {
         NoteResponse response = noteService.createNote(user, request);
         return ResponseEntity.ok(response);
     }
@@ -122,9 +122,9 @@ public class NoteController {
                     description = "Заметка не найдена"
             )
     })
-    public ResponseEntity<NoteResponse> updateNote(@PathVariable Long id,
-                                                   @AuthenticationPrincipal User user,
-                                                   @RequestBody UpdateNoteRequest request) {
+    public ResponseEntity<NoteResponse> updateNote(@PathVariable final Long id,
+                                                   @AuthenticationPrincipal final User user,
+                                                   @RequestBody final UpdateNoteRequest request) {
         NoteResponse response = noteService.updateNote(id, user, request);
         return ResponseEntity.ok(response);
     }
@@ -152,8 +152,8 @@ public class NoteController {
                     description = "Заметка не найдена"
             )
     })
-    public ResponseEntity<Void> deleteNote(@PathVariable Long id,
-                                           @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> deleteNote(@PathVariable final Long id,
+                                           @AuthenticationPrincipal final User user) {
         noteService.deleteNote(id, user);
         return ResponseEntity.noContent().build();
     }
