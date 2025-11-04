@@ -71,4 +71,8 @@ public class UserService {
 
         return new JwtResponse(token);
     }
+
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
 }
