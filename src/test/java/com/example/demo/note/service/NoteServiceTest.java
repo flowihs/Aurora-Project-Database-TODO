@@ -1,34 +1,35 @@
 package com.example.demo.note.service;
 
-import com.example.demo.note.dto.CreateNoteRequest;
 import com.example.demo.note.dto.NoteResponse;
-import com.example.demo.user.dto.UserCreateDto;
-import com.example.demo.user.dto.UserRegistrationResponseDto;
+import com.example.demo.note.entity.Note;
+import com.example.demo.note.repository.NoteRepository;
 import com.example.demo.user.entity.User;
-import com.example.demo.user.service.UserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
-@SpringBootTest
-@Transactional
+import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class NoteServiceTest {
 
-    @Autowired
-    private UserService userService;
+    @Mock
+    private NoteRepository noteRepository;
 
-    @Autowired
+    @InjectMocks
     private NoteService noteService;
 
     @Test
-    void getUserNotes() {
-        UserCreateDto userCreateDto = UserCreateDto.builder()
+    void getUserNotesTest() {
+
+        User user = User.builder()
                 .nickname("flowihs")
                 .firstname("Иван")
                 .lastname("Петров")
@@ -36,29 +37,40 @@ class NoteServiceTest {
                 .password("SecurePassword123!")
                 .build();
 
-        UserRegistrationResponseDto userReg = userService.register(userCreateDto);
-        User user = userService.findById(userReg.getUserId());
+        Note note1 = Note.builder()
+                .id(1L)
+                .name("Мои планы 1")
+                .content("1")
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
 
-        List<NoteResponse> noteResponseList = new ArrayList<>();
+        Note note2 = Note.builder()
+                .id(2L)
+                .name("Мои планы 2")
+                .content("2")
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
 
-        for (int i = 0; i < 3; i++) {
-            noteResponseList.add(noteService.createNote(user, CreateNoteRequest.builder()
-                    .name("Мои планы %s".formatted(i))
-                    .content("%s".formatted(i))
-                    .build()));
-        }
+        when(noteRepository.findByUser(user)).thenReturn(List.of(note1, note2));
 
-        List<NoteResponse> userNotes = noteService.getUserNotes(user);
+        List<NoteResponse> result = noteService.getUserNotes(user);
 
-        int counter = 0;
-        for (NoteResponse note : noteResponseList) {
-            for (NoteResponse userNote : userNotes) {
-                if (Objects.equals(note.getId(), userNote.getId()) && Objects.equals(note.getName(), userNote.getName()) && Objects.equals(note.getContent(), userNote.getContent())) {
-                    counter++;
-                }
-            }
-        }
-        Assertions.assertEquals(noteResponseList.size(), counter);
+        NoteResponse noteResponse1 = NoteResponse.builder()
+                .id(note1.getId())
+                .name(note1.getName())
+                .content(note1.getContent())
+                .createdAt(note1.getCreatedAt()).build();
 
+        NoteResponse noteResponse2 = NoteResponse.builder()
+                .id(note2.getId())
+                .name(note2.getName())
+                .content(note2.getContent())
+                .createdAt(note2.getCreatedAt()).build();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0)).isEqualTo(noteResponse1);
+        assertThat(result.get(1)).isEqualTo(noteResponse2);
     }
 }
