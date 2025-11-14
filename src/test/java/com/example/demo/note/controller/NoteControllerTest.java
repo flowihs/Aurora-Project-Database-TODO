@@ -85,7 +85,7 @@
 //            .content("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
 //            .build();
 //
-//        when(noteService.getNoteById(any(User.class), anyLong()))
+//        when(noteService.getNoteById(anyLong(), any(User.class)))
 //            .thenReturn(mockResponse);
 //
 //        mockMvc.perform(get("/api/notes/1")
